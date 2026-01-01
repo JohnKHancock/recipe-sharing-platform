@@ -1,64 +1,199 @@
-import Image from "next/image";
+"use client";
+
+import { useState, useMemo } from "react";
+import { Header } from "./components/header";
+import { RecipeCard } from "./components/recipe-card";
+import { SearchFilters } from "./components/search-filters";
+
+// Mock data - will be replaced with Supabase queries later
+const mockRecipes = [
+  {
+    id: "1",
+    title: "Classic Margherita Pizza",
+    description:
+      "A timeless Italian pizza with fresh mozzarella, tomato sauce, and basil leaves. Perfect for a cozy dinner at home.",
+    coverImageUrl: undefined,
+    prepMinutes: 20,
+    cookMinutes: 15,
+    servings: 4,
+    cuisine: "Italian",
+    category: "Dinner",
+    difficulty: "Easy",
+    tags: ["pizza", "italian", "vegetarian"],
+    author: {
+      username: "chef_maria",
+      displayName: "Maria Rossi",
+    },
+  },
+  {
+    id: "2",
+    title: "Chocolate Chip Cookies",
+    description:
+      "Soft and chewy cookies loaded with chocolate chips. A family favorite that's perfect for any occasion.",
+    coverImageUrl: undefined,
+    prepMinutes: 15,
+    cookMinutes: 12,
+    servings: 24,
+    cuisine: "American",
+    category: "Dessert",
+    difficulty: "Easy",
+    tags: ["cookies", "dessert", "sweet"],
+    author: {
+      username: "baker_john",
+      displayName: "John Baker",
+    },
+  },
+  {
+    id: "3",
+    title: "Chicken Tikka Masala",
+    description:
+      "Creamy and aromatic Indian curry with tender chicken pieces. Serve with basmati rice or naan bread.",
+    coverImageUrl: undefined,
+    prepMinutes: 30,
+    cookMinutes: 40,
+    servings: 6,
+    cuisine: "Indian",
+    category: "Dinner",
+    difficulty: "Medium",
+    tags: ["curry", "indian", "chicken"],
+    author: {
+      username: "spice_master",
+      displayName: "Amit Patel",
+    },
+  },
+  {
+    id: "4",
+    title: "Avocado Toast with Poached Eggs",
+    description:
+      "A healthy and delicious breakfast option with creamy avocado and perfectly poached eggs on sourdough toast.",
+    coverImageUrl: undefined,
+    prepMinutes: 10,
+    cookMinutes: 5,
+    servings: 2,
+    cuisine: "Mediterranean",
+    category: "Breakfast",
+    difficulty: "Easy",
+    tags: ["breakfast", "healthy", "eggs"],
+    author: {
+      username: "healthy_eats",
+      displayName: "Sarah Green",
+    },
+  },
+  {
+    id: "5",
+    title: "Beef Bulgogi",
+    description:
+      "Korean marinated beef that's sweet, savory, and incredibly tender. Best served with rice and kimchi.",
+    coverImageUrl: undefined,
+    prepMinutes: 20,
+    cookMinutes: 15,
+    servings: 4,
+    cuisine: "Asian",
+    category: "Dinner",
+    difficulty: "Medium",
+    tags: ["korean", "beef", "marinated"],
+    author: {
+      username: "kimchi_lover",
+      displayName: "Ji-hoon Kim",
+    },
+  },
+  {
+    id: "6",
+    title: "Classic French Onion Soup",
+    description:
+      "Rich and comforting soup with caramelized onions, beef broth, and melted Gruyère cheese.",
+    coverImageUrl: undefined,
+    prepMinutes: 15,
+    cookMinutes: 60,
+    servings: 4,
+    cuisine: "French",
+    category: "Lunch",
+    difficulty: "Medium",
+    tags: ["soup", "french", "comfort-food"],
+    author: {
+      username: "paris_chef",
+      displayName: "Pierre Dubois",
+    },
+  },
+];
 
 export default function Home() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filters, setFilters] = useState<{
+    cuisine?: string;
+    category?: string;
+    difficulty?: string;
+  }>({});
+
+  const filteredRecipes = useMemo(() => {
+    return mockRecipes.filter((recipe) => {
+      // Search filter
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        const matchesSearch =
+          recipe.title.toLowerCase().includes(query) ||
+          recipe.description?.toLowerCase().includes(query) ||
+          recipe.tags?.some((tag) => tag.toLowerCase().includes(query));
+
+        if (!matchesSearch) return false;
+      }
+
+      // Cuisine filter
+      if (filters.cuisine && recipe.cuisine !== filters.cuisine) {
+        return false;
+      }
+
+      // Category filter
+      if (filters.category && recipe.category !== filters.category) {
+        return false;
+      }
+
+      // Difficulty filter
+      if (filters.difficulty && recipe.difficulty !== filters.difficulty) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [searchQuery, filters]);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+      <Header />
+
+      <main className="container mx-auto px-4 py-8">
+        {/* Hero Section */}
+        <div className="mb-8 text-center">
+          <h1 className="mb-4 text-4xl font-bold text-gray-900 dark:text-gray-50 md:text-5xl">
+            Discover Amazing Recipes
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-lg text-gray-600 dark:text-gray-400">
+            Share your favorite recipes and discover new ones from our community
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* Search and Filters */}
+        <div className="mb-8">
+          <SearchFilters
+            onSearchChange={setSearchQuery}
+            onFilterChange={setFilters}
+          />
         </div>
+
+        {/* Recipes Grid */}
+        {filteredRecipes.length > 0 ? (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredRecipes.map((recipe) => (
+              <RecipeCard key={recipe.id} {...recipe} />
+            ))}
+          </div>
+        ) : (
+          <div className="py-12 text-center">
+            <p className="text-lg text-gray-600 dark:text-gray-400">
+              No recipes found. Try adjusting your search or filters.
+            </p>
+          </div>
+        )}
       </main>
     </div>
   );
