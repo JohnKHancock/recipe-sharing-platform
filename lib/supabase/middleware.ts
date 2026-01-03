@@ -52,15 +52,22 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Redirect authenticated users away from auth pages
-  if (
-    user &&
-    (request.nextUrl.pathname.startsWith("/auth/sign-in") ||
-      request.nextUrl.pathname.startsWith("/auth/sign-up"))
-  ) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/dashboard";
-    return NextResponse.redirect(url);
+  // Redirect authenticated users away from auth pages and home page
+  if (user) {
+    if (
+      request.nextUrl.pathname.startsWith("/auth/sign-in") ||
+      request.nextUrl.pathname.startsWith("/auth/sign-up")
+    ) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/dashboard";
+      return NextResponse.redirect(url);
+    }
+    // Redirect authenticated users from home page to dashboard
+    if (request.nextUrl.pathname === "/") {
+      const url = request.nextUrl.clone();
+      url.pathname = "/dashboard";
+      return NextResponse.redirect(url);
+    }
   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is.

@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { Header } from "@/app/components/header";
 import { RecipeCard } from "./recipe-card";
+import Link from "next/link";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -36,13 +37,16 @@ export default async function DashboardPage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <Header />
       <main className="container mx-auto px-4 py-8">
-        <div className="mb-8">
+        <div className="mb-8 flex items-center justify-between">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-50 md:text-4xl">
-            Recipe Dashboard
+            Recent Recipes
           </h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400">
-            Discover recipes shared by our community
-          </p>
+          <Link
+            href="/recipes/new"
+            className="rounded-md bg-orange-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 dark:bg-orange-500 dark:hover:bg-orange-600"
+          >
+            Add Recipe
+          </Link>
         </div>
 
         {recipes && recipes.length > 0 ? (

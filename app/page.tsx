@@ -22,18 +22,12 @@ export default function Home() {
               with the world.
             </p>
 
-            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <div className="flex items-center justify-center">
               <Link
                 href="/auth/sign-up"
                 className="rounded-md bg-orange-600 px-8 py-4 text-lg font-semibold text-white transition-colors hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 dark:bg-orange-500 dark:hover:bg-orange-600"
               >
                 Start Creating
-              </Link>
-              <Link
-                href="/auth/sign-in"
-                className="rounded-md border-2 border-gray-300 bg-white px-8 py-4 text-lg font-semibold text-gray-900 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-50 dark:hover:bg-gray-800"
-              >
-                Sign In
               </Link>
             </div>
 
