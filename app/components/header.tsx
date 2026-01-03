@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { UserMenu } from "./user-menu";
 
 export function Header() {
   return (
@@ -17,32 +18,7 @@ export function Header() {
           >
             Home
           </Link>
-          <Link
-            href="/recipes/new"
-            className="text-sm font-medium text-gray-700 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-50"
-          >
-            Create Recipe
-          </Link>
-          <Link
-            href="/me/favorites"
-            className="text-sm font-medium text-gray-700 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-50"
-          >
-            Favorites
-          </Link>
-          <div className="flex items-center space-x-4">
-            <Link
-              href="/auth/sign-in"
-              className="text-sm font-medium text-gray-700 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-50"
-            >
-              Sign In
-            </Link>
-            <Link
-              href="/auth/sign-up"
-              className="rounded-md bg-orange-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-orange-700 dark:bg-orange-500 dark:hover:bg-orange-600"
-            >
-              Sign Up
-            </Link>
-          </div>
+          <UserMenu />
         </nav>
       </div>
     </header>
