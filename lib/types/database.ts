@@ -4,6 +4,8 @@ export interface Profile {
   id: string;
   username: string;
   full_name: string;
+  email: string | null;
+  bio: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -21,7 +23,27 @@ export interface Recipe {
   updated_at: string;
 }
 
+export interface Like {
+  id: string;
+  user_id: string;
+  recipe_id: string;
+  created_at: string;
+}
+
+export interface Comment {
+  id: string;
+  user_id: string;
+  recipe_id: string;
+  content: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface RecipeWithProfile extends Recipe {
+  profiles: Profile;
+}
+
+export interface CommentWithProfile extends Comment {
   profiles: Profile;
 }
 
@@ -37,3 +59,11 @@ export type RecipeUpdate = Partial<Omit<Recipe, "id" | "user_id" | "created_at" 
 // Type for creating/updating a profile (omits auto-generated fields)
 export type ProfileUpdate = Partial<Omit<Profile, "id" | "created_at" | "updated_at">>;
 
+// Type for creating a new comment (omits auto-generated fields)
+export type CommentInsert = Omit<
+  Comment,
+  "id" | "created_at" | "updated_at"
+>;
+
+// Type for updating a comment (all fields optional except id)
+export type CommentUpdate = Partial<Omit<Comment, "id" | "user_id" | "recipe_id" | "created_at" | "updated_at">>;

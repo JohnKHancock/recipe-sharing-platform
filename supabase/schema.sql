@@ -13,6 +13,8 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   username TEXT UNIQUE NOT NULL,
   full_name TEXT NOT NULL,
+  email TEXT,
+  bio TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
   updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
@@ -90,12 +92,15 @@ BEGIN
     END LOOP;
   END IF;
   
-  INSERT INTO public.profiles (id, username, full_name)
+  INSERT INTO public.profiles (id, username, full_name, email, bio)
   VALUES (
     NEW.id,
     generated_username,
-    COALESCE(NEW.raw_user_meta_data->>'full_name', 'User')
-  );
+    COALESCE(NEW.raw_user_meta_data->>'full_name', 'User'),
+    NEW.email,
+    NEW.raw_user_meta_data->>'bio'
+  )
+  ON CONFLICT (id) DO NOTHING;
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

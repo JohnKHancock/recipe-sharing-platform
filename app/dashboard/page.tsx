@@ -2,9 +2,24 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { Header } from "@/app/components/header";
 import { RecipeCard } from "./recipe-card";
+import { SearchFilters } from "./search-filters";
+import { SearchFiltersSkeleton } from "@/app/components/skeletons";
 import Link from "next/link";
+import { Suspense } from "react";
 
-export default async function DashboardPage() {
+interface DashboardPageProps {
+  searchParams: Promise<{
+    q?: string;
+    category?: string;
+    difficulty?: string;
+    maxTime?: string;
+  }>;
+}
+
+export default async function DashboardPage({
+  searchParams,
+}: DashboardPageProps) {
+  const params = await searchParams;
   const supabase = await createClient();
 
   // Check if user is authenticated
@@ -16,18 +31,52 @@ export default async function DashboardPage() {
     redirect("/auth/sign-in");
   }
 
-  // Fetch recipes with profiles using the foreign key relationship
-  const { data: recipes, error } = await supabase
+  // Build query with filters
+  let query = supabase
     .from("recipes")
-    .select(`
+    .select(
+      `
       *,
       profiles!inner (
         id,
         username,
         full_name
       )
-    `)
-    .order("created_at", { ascending: false });
+    `
+    );
+
+  // Apply text search (title and ingredients)
+  if (params.q?.trim()) {
+    const searchTerm = params.q.trim();
+    // Search in both title and ingredients using OR condition
+    // PostgREST syntax: column.ilike.pattern,column2.ilike.pattern
+    query = query.or(
+      `title.ilike.%${searchTerm}%,ingredients.ilike.%${searchTerm}%`
+    );
+  }
+
+  // Apply category filter
+  if (params.category && params.category !== "All") {
+    query = query.eq("category", params.category);
+  }
+
+  // Apply difficulty filter
+  if (params.difficulty && params.difficulty !== "All") {
+    query = query.eq("difficulty", params.difficulty);
+  }
+
+  // Apply cooking time filter (less than or equal to)
+  if (params.maxTime) {
+    const maxTime = parseInt(params.maxTime, 10);
+    if (!isNaN(maxTime)) {
+      query = query.lte("cooking_time", maxTime);
+    }
+  }
+
+  // Order by most recent
+  query = query.order("created_at", { ascending: false });
+
+  const { data: recipes, error } = await query;
 
   if (error) {
     console.error("Error fetching recipes:", error);
@@ -49,20 +98,32 @@ export default async function DashboardPage() {
           </Link>
         </div>
 
+        {/* Search and Filters */}
+        <Suspense fallback={<SearchFiltersSkeleton />}>
+          <SearchFilters />
+        </Suspense>
+
         {recipes && recipes.length > 0 ? (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {recipes.map((recipe) => (
-              <RecipeCard
-                key={recipe.id}
-                recipe={recipe}
-                profile={recipe.profiles}
-              />
-            ))}
-          </div>
+          <>
+            <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+              Found {recipes.length} recipe{recipes.length !== 1 ? "s" : ""}
+            </div>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {recipes.map((recipe) => (
+                <RecipeCard
+                  key={recipe.id}
+                  recipe={recipe}
+                  profile={recipe.profiles}
+                />
+              ))}
+            </div>
+          </>
         ) : (
           <div className="py-12 text-center">
             <p className="text-lg text-gray-600 dark:text-gray-400">
-              No recipes yet. Be the first to share a recipe!
+              {params.q || params.category || params.difficulty || params.maxTime
+                ? "No recipes found matching your search criteria. Try adjusting your filters."
+                : "No recipes yet. Be the first to share a recipe!"}
             </p>
           </div>
         )}

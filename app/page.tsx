@@ -15,7 +15,7 @@ export default function Home() {
               <span className="block text-orange-600 dark:text-orange-400">
                 Recipes
               </span>
-            </h1>
+          </h1>
 
             <p className="mx-auto max-w-xl text-xl text-gray-600 dark:text-gray-400 md:text-2xl">
               Join our community of home cooks and share your culinary creations
@@ -37,11 +37,11 @@ export default function Home() {
                 <Link
                   href="/auth/sign-in"
                   className="font-medium text-orange-600 hover:text-orange-500 dark:text-orange-400"
-                >
+            >
                   Sign in here
                 </Link>
-              </p>
-            </div>
+          </p>
+        </div>
           </div>
         </div>
       </main>

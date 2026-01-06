@@ -18,6 +18,18 @@ export async function signIn(formData: FormData) {
     return { error: error.message };
   }
 
+  // Ensure profile exists after sign-in
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    try {
+      const { ensureProfileExists } = await import("@/lib/profiles");
+      await ensureProfileExists(user.id);
+    } catch (profileError) {
+      console.error("Error ensuring profile exists:", profileError);
+      // Continue anyway - profile might exist
+    }
+  }
+
   revalidatePath("/", "layout");
   redirect("/dashboard");
 }
@@ -36,10 +48,22 @@ export async function signUp(formData: FormData) {
     },
   };
 
-  const { error } = await supabase.auth.signUp(data);
+  const { error, data: signUpData } = await supabase.auth.signUp(data);
 
   if (error) {
     return { error: error.message };
+  }
+
+  // Ensure profile is created immediately after signup
+  // The trigger should handle this, but we'll also ensure it in the app
+  if (signUpData.user) {
+    try {
+      const { ensureProfileExists } = await import("@/lib/profiles");
+      await ensureProfileExists(signUpData.user.id);
+    } catch (profileError) {
+      console.error("Error ensuring profile exists after signup:", profileError);
+      // Continue - profile might be created by trigger
+    }
   }
 
   revalidatePath("/", "layout");

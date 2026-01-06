@@ -74,10 +74,22 @@ export function UserMenu() {
         Create Recipe
       </Link>
       <Link
-        href="/me/favorites"
+        href="/me/recipes"
         className="text-sm font-medium text-gray-700 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-50"
       >
-        Favorites
+        My Recipes
+      </Link>
+      <Link
+        href="/me/saved"
+        className="text-sm font-medium text-gray-700 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-50"
+      >
+        Saved Recipes
+      </Link>
+      <Link
+        href="/me/profile"
+        className="text-sm font-medium text-gray-700 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-50"
+      >
+        My Profile
       </Link>
       <button
         onClick={handleSignOut}
@@ -88,4 +100,3 @@ export function UserMenu() {
     </div>
   );
 }
-
