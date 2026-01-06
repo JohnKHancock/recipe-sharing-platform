@@ -41,8 +41,8 @@ export async function createRecipe(formData: FormData) {
   }
 
   // Insert recipe
-  const { data, error } = await supabase
-    .from("recipes")
+  const { data, error } = await (supabase
+    .from("recipes") as any)
     .insert({
       user_id: user.id,
       title,
@@ -84,11 +84,14 @@ export async function updateRecipe(recipeId: string, formData: FormData) {
     .eq("id", recipeId)
     .single();
 
-  if (!existingRecipe) {
+  type RecipeSelect = { user_id: string };
+  const recipe = existingRecipe as RecipeSelect | null;
+
+  if (!recipe) {
     return { error: "Recipe not found" };
   }
 
-  if (existingRecipe.user_id !== user.id) {
+  if (recipe.user_id !== user.id) {
     return { error: "You don't have permission to edit this recipe" };
   }
 
@@ -108,8 +111,8 @@ export async function updateRecipe(recipeId: string, formData: FormData) {
   }
 
   // Update recipe
-  const { error } = await supabase
-    .from("recipes")
+  const { error } = await (supabase
+    .from("recipes") as any)
     .update({
       title,
       ingredients,
@@ -150,11 +153,14 @@ export async function deleteRecipe(recipeId: string) {
     .eq("id", recipeId)
     .single();
 
-  if (!existingRecipe) {
+  type RecipeSelect = { user_id: string };
+  const recipe = existingRecipe as RecipeSelect | null;
+
+  if (!recipe) {
     return { error: "Recipe not found" };
   }
 
-  if (existingRecipe.user_id !== user.id) {
+  if (recipe.user_id !== user.id) {
     return { error: "You don't have permission to delete this recipe" };
   }
 
