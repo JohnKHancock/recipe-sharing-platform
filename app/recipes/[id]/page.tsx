@@ -7,6 +7,8 @@ import { LikeButton } from "./like-button";
 import { CommentsSection } from "./comments-section";
 import type { CommentWithProfile, Profile } from "@/lib/types/database";
 
+export const dynamic = 'force-dynamic';
+
 interface RecipePageProps {
   params: Promise<{ id: string }>;
 }

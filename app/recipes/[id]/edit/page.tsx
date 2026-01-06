@@ -1,4 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
+
+export const dynamic = 'force-dynamic';
 import { redirect, notFound } from "next/navigation";
 import { Header } from "@/app/components/header";
 import { EditRecipeForm } from "./edit-recipe-form";

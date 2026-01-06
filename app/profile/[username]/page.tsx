@@ -5,6 +5,8 @@ import Link from "next/link";
 import { RecipeCard } from "@/app/dashboard/recipe-card";
 import type { Profile } from "@/lib/types/database";
 
+export const dynamic = 'force-dynamic';
+
 interface ProfilePageProps {
   params: Promise<{ username: string }>;
 }

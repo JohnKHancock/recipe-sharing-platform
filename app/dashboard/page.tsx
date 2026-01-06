@@ -8,6 +8,8 @@ import Link from "next/link";
 import { Suspense } from "react";
 import type { Profile } from "@/lib/types/database";
 
+export const dynamic = 'force-dynamic';
+
 interface DashboardPageProps {
   searchParams: Promise<{
     q?: string;

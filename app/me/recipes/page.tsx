@@ -5,6 +5,8 @@ import { RecipeCard } from "@/app/dashboard/recipe-card";
 import Link from "next/link";
 import type { Profile } from "@/lib/types/database";
 
+export const dynamic = 'force-dynamic';
+
 export default async function MyRecipesPage() {
   const supabase = await createClient();
 
