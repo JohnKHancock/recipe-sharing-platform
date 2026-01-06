@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Header } from "@/app/components/header";
 import Link from "next/link";
 import { RecipeCard } from "@/app/dashboard/recipe-card";
+import type { Profile } from "@/lib/types/database";
 
 interface ProfilePageProps {
   params: Promise<{ username: string }>;
@@ -22,6 +23,18 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   if (profileError || !profile) {
     notFound();
   }
+
+  type ProfileData = {
+    id: string;
+    username: string;
+    full_name: string;
+    email: string | null;
+    bio: string | null;
+    created_at: string;
+    updated_at: string;
+  };
+  
+  const typedProfile = profile as ProfileData;
 
   // Fetch user's recipes
   const { data: recipes, error: recipesError } = await supabase
@@ -55,7 +68,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const isOwnProfile = user?.id === profile.id;
+  const isOwnProfile = user?.id === typedProfile.id;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
@@ -66,18 +79,18 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
           <div className="flex items-start justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-50 md:text-4xl">
-                {profile.full_name}
+                {typedProfile.full_name}
               </h1>
               <p className="mt-1 text-lg text-gray-600 dark:text-gray-400">
-                @{profile.username}
+                @{typedProfile.username}
               </p>
-              {profile.bio && (
+              {typedProfile.bio && (
                 <p className="mt-3 text-base text-gray-700 dark:text-gray-300">
-                  {profile.bio}
+                  {typedProfile.bio}
                 </p>
               )}
               <p className="mt-2 text-sm text-gray-500 dark:text-gray-500">
-                Joined {new Date(profile.created_at).toLocaleDateString("en-US", {
+                Joined {new Date(typedProfile.created_at).toLocaleDateString("en-US", {
                   year: "numeric",
                   month: "long",
                 })}
@@ -106,7 +119,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
                 <RecipeCard
                   key={recipe.id}
                   recipe={recipe}
-                  profile={profile}
+                  profile={typedProfile as Profile}
                 />
               ))}
             </div>

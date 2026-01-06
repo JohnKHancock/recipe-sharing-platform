@@ -6,6 +6,7 @@ import { SearchFilters } from "./search-filters";
 import { SearchFiltersSkeleton } from "@/app/components/skeletons";
 import Link from "next/link";
 import { Suspense } from "react";
+import type { Profile } from "@/lib/types/database";
 
 interface DashboardPageProps {
   searchParams: Promise<{
@@ -134,7 +135,13 @@ export default async function DashboardPage({
                 <RecipeCard
                   key={recipe.id}
                   recipe={recipe}
-                  profile={recipe.profiles}
+                  profile={{
+                    ...recipe.profiles,
+                    email: null,
+                    bio: null,
+                    created_at: "",
+                    updated_at: "",
+                  } as Profile}
                 />
               ))}
             </div>

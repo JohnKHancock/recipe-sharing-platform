@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { Header } from "@/app/components/header";
 import { RecipeCard } from "@/app/dashboard/recipe-card";
 import Link from "next/link";
+import type { Profile } from "@/lib/types/database";
 
 export default async function MyRecipesPage() {
   const supabase = await createClient();
@@ -30,6 +31,18 @@ export default async function MyRecipesPage() {
     .select("*")
     .eq("id", user.id)
     .single();
+
+  type ProfileData = {
+    id: string;
+    username: string;
+    full_name: string;
+    email: string | null;
+    bio: string | null;
+    created_at: string;
+    updated_at: string;
+  };
+  
+  const typedProfile = (profile as ProfileData) || null;
 
   // Fetch user's recipes
   const { data: recipes, error } = await supabase
@@ -80,7 +93,7 @@ export default async function MyRecipesPage() {
               <RecipeCard
                 key={recipe.id}
                 recipe={recipe}
-                profile={profile || null}
+                profile={(typedProfile as Profile) || null}
               />
             ))}
           </div>

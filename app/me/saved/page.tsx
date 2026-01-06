@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { Header } from "@/app/components/header";
 import { RecipeCard } from "@/app/dashboard/recipe-card";
 import Link from "next/link";
+import type { Profile } from "@/lib/types/database";
 
 export default async function SavedRecipesPage() {
   const supabase = await createClient();
@@ -98,7 +99,13 @@ export default async function SavedRecipesPage() {
                 <RecipeCard
                   key={recipe.id}
                   recipe={recipe}
-                  profile={recipe.profiles}
+                  profile={{
+                    ...recipe.profiles,
+                    email: null,
+                    bio: null,
+                    created_at: "",
+                    updated_at: "",
+                  } as Profile}
                 />
               ))}
             </div>
