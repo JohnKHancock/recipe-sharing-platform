@@ -5,6 +5,7 @@ import Link from "next/link";
 import { DeleteButton } from "./delete-button";
 import { LikeButton } from "./like-button";
 import { CommentsSection } from "./comments-section";
+import type { CommentWithProfile, Profile } from "@/lib/types/database";
 
 interface RecipePageProps {
   params: Promise<{ id: string }>;
@@ -109,9 +110,15 @@ export default async function RecipePage({ params }: RecipePageProps) {
     };
   };
   
-  const commentsWithProfiles = ((comments || []) as CommentWithProfileData[]).map((comment) => ({
+  const commentsWithProfiles: CommentWithProfile[] = ((comments || []) as CommentWithProfileData[]).map((comment) => ({
     ...comment,
-    profiles: comment.profiles,
+    profiles: {
+      ...comment.profiles,
+      email: null,
+      bio: null,
+      created_at: "",
+      updated_at: "",
+    } as Profile,
   }));
   const ingredients = typedRecipe.ingredients.split("\n").filter((line: string) => line.trim());
   const instructions = typedRecipe.instructions
