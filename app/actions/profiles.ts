@@ -32,7 +32,10 @@ export async function updateProfile(formData: FormData) {
     .eq("username", username)
     .single();
 
-  if (existingProfile && existingProfile.id !== user.id) {
+  type ProfileSelect = { id: string; username: string };
+  const profile = existingProfile as ProfileSelect | null;
+
+  if (profile && profile.id !== user.id) {
     return { error: "Username is already taken" };
   }
 
