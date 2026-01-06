@@ -34,12 +34,15 @@ export async function toggleLike(recipeId: string) {
     .eq("recipe_id", recipeId)
     .single();
 
-  if (existingLike) {
+  type LikeSelect = { id: string };
+  const like = existingLike as LikeSelect | null;
+
+  if (like) {
     // Unlike: delete the like
     const { error } = await supabase
       .from("likes")
       .delete()
-      .eq("id", existingLike.id);
+      .eq("id", like.id);
 
     if (error) {
       console.error("Error unliking recipe:", error);
@@ -51,10 +54,12 @@ export async function toggleLike(recipeId: string) {
     return { success: true, liked: false };
   } else {
     // Like: insert a new like
-    const { error } = await supabase.from("likes").insert({
-      user_id: user.id,
-      recipe_id: recipeId,
-    });
+    const { error } = await (supabase
+      .from("likes") as any)
+      .insert({
+        user_id: user.id,
+        recipe_id: recipeId,
+      });
 
     if (error) {
       console.error("Error liking recipe:", error);
