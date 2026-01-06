@@ -40,8 +40,8 @@ export async function updateProfile(formData: FormData) {
   }
 
   // Update profile
-  const { error } = await supabase
-    .from("profiles")
+  const { error } = await (supabase
+    .from("profiles") as any)
     .update({
       username,
       full_name,
