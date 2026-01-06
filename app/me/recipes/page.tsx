@@ -42,7 +42,7 @@ export default async function MyRecipesPage() {
     updated_at: string;
   };
   
-  const typedProfile = (profile as ProfileData) || null;
+  const typedProfile = profile ? (profile as ProfileData) : null;
 
   // Fetch user's recipes
   const { data: recipes, error } = await supabase
@@ -93,7 +93,7 @@ export default async function MyRecipesPage() {
               <RecipeCard
                 key={recipe.id}
                 recipe={recipe}
-                profile={(typedProfile as Profile) || null}
+                profile={typedProfile ? (typedProfile as Profile) : null}
               />
             ))}
           </div>
