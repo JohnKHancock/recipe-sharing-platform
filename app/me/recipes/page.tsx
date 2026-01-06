@@ -50,7 +50,7 @@ export default async function MyRecipesPage() {
     ingredients: string;
     instructions: string;
     cooking_time: number | null;
-    difficulty: string | null;
+    difficulty: "Easy" | "Medium" | "Hard" | null;
     category: string;
     created_at: string;
     updated_at: string;
