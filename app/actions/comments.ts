@@ -151,7 +151,9 @@ export async function deleteComment(commentId: string) {
     .eq("id", comment.recipe_id)
     .single();
 
-  const isRecipeOwner = recipe?.user_id === user.id;
+  type RecipeSelect = { user_id: string };
+  const recipeData = recipe as RecipeSelect | null;
+  const isRecipeOwner = recipeData?.user_id === user.id;
 
   // Allow deletion if user is either comment owner or recipe owner
   if (!isCommentOwner && !isRecipeOwner) {
