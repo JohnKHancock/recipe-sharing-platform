@@ -42,11 +42,35 @@ export default async function SavedRecipesPage() {
   }
 
   // Extract recipes from the joined data
-  const recipes =
-    likedRecipes?.map((like) => ({
-      ...like.recipes,
-      profiles: like.recipes.profiles,
-    })) || [];
+  type RecipeWithProfile = {
+    id: string;
+    user_id: string;
+    title: string;
+    ingredients: string;
+    instructions: string;
+    cooking_time: number | null;
+    difficulty: string | null;
+    category: string;
+    created_at: string;
+    updated_at: string;
+    profiles: {
+      id: string;
+      username: string;
+      full_name: string;
+    };
+  };
+  
+  type LikeWithRecipe = {
+    recipe_id: string;
+    created_at: string;
+    recipes: RecipeWithProfile;
+  };
+  
+  const typedLikedRecipes = (likedRecipes as LikeWithRecipe[]) || [];
+  const recipes = typedLikedRecipes.map((like) => ({
+    ...like.recipes,
+    profiles: like.recipes.profiles,
+  }));
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">

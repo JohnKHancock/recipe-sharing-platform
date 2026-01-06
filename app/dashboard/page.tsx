@@ -82,6 +82,27 @@ export default async function DashboardPage({
     console.error("Error fetching recipes:", error);
   }
 
+  // Type assertion for recipes with profiles
+  type RecipeWithProfile = {
+    id: string;
+    user_id: string;
+    title: string;
+    ingredients: string;
+    instructions: string;
+    cooking_time: number | null;
+    difficulty: string | null;
+    category: string;
+    created_at: string;
+    updated_at: string;
+    profiles: {
+      id: string;
+      username: string;
+      full_name: string;
+    };
+  };
+  
+  const typedRecipes = (recipes as RecipeWithProfile[]) || [];
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <Header />
@@ -103,13 +124,13 @@ export default async function DashboardPage({
           <SearchFilters />
         </Suspense>
 
-        {recipes && recipes.length > 0 ? (
+        {typedRecipes && typedRecipes.length > 0 ? (
           <>
             <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
-              Found {recipes.length} recipe{recipes.length !== 1 ? "s" : ""}
+              Found {typedRecipes.length} recipe{typedRecipes.length !== 1 ? "s" : ""}
             </div>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {recipes.map((recipe) => (
+              {typedRecipes.map((recipe) => (
                 <RecipeCard
                   key={recipe.id}
                   recipe={recipe}

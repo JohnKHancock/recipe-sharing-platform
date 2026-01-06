@@ -42,6 +42,22 @@ export default async function MyRecipesPage() {
     console.error("Error fetching recipes:", error);
   }
 
+  // Type assertion for recipes
+  type Recipe = {
+    id: string;
+    user_id: string;
+    title: string;
+    ingredients: string;
+    instructions: string;
+    cooking_time: number | null;
+    difficulty: string | null;
+    category: string;
+    created_at: string;
+    updated_at: string;
+  };
+  
+  const typedRecipes = (recipes as Recipe[]) || [];
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <Header />
@@ -58,9 +74,9 @@ export default async function MyRecipesPage() {
           </Link>
         </div>
 
-        {recipes && recipes.length > 0 ? (
+        {typedRecipes && typedRecipes.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {recipes.map((recipe) => (
+            {typedRecipes.map((recipe) => (
               <RecipeCard
                 key={recipe.id}
                 recipe={recipe}

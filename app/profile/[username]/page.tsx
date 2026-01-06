@@ -34,6 +34,22 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
     console.error("Error fetching recipes:", recipesError);
   }
 
+  // Type assertion for recipes
+  type Recipe = {
+    id: string;
+    user_id: string;
+    title: string;
+    ingredients: string;
+    instructions: string;
+    cooking_time: number | null;
+    difficulty: string | null;
+    category: string;
+    created_at: string;
+    updated_at: string;
+  };
+  
+  const typedRecipes = (recipes as Recipe[]) || [];
+
   // Get current user to check if viewing own profile
   const {
     data: { user },
@@ -81,12 +97,12 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
         {/* Recipes Section */}
         <div>
           <h2 className="mb-6 text-2xl font-bold text-gray-900 dark:text-gray-50">
-            Recipes ({recipes?.length || 0})
+            Recipes ({typedRecipes?.length || 0})
           </h2>
 
-          {recipes && recipes.length > 0 ? (
+          {typedRecipes && typedRecipes.length > 0 ? (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {recipes.map((recipe) => (
+              {typedRecipes.map((recipe) => (
                 <RecipeCard
                   key={recipe.id}
                   recipe={recipe}
