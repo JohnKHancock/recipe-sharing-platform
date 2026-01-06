@@ -31,8 +31,23 @@ export default async function EditRecipePage({ params }: EditRecipePageProps) {
     notFound();
   }
 
+  type RecipeSelect = {
+    id: string;
+    user_id: string;
+    title: string;
+    ingredients: string;
+    instructions: string;
+    cooking_time: number | null;
+    difficulty: "Easy" | "Medium" | "Hard" | null;
+    category: string;
+    created_at: string;
+    updated_at: string;
+  };
+  
+  const typedRecipe = recipe as RecipeSelect;
+
   // Verify ownership
-  if (recipe.user_id !== user.id) {
+  if (typedRecipe.user_id !== user.id) {
     redirect(`/recipes/${id}`);
   }
 
@@ -49,7 +64,7 @@ export default async function EditRecipePage({ params }: EditRecipePageProps) {
           </p>
         </div>
 
-        <EditRecipeForm recipe={recipe} />
+        <EditRecipeForm recipe={typedRecipe} />
       </main>
     </div>
   );

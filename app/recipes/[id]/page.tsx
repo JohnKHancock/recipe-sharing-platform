@@ -34,12 +34,32 @@ export default async function RecipePage({ params }: RecipePageProps) {
     notFound();
   }
 
+  type RecipeWithProfile = {
+    id: string;
+    user_id: string;
+    title: string;
+    ingredients: string;
+    instructions: string;
+    cooking_time: number | null;
+    difficulty: "Easy" | "Medium" | "Hard" | null;
+    category: string;
+    created_at: string;
+    updated_at: string;
+    profiles: {
+      id: string;
+      username: string;
+      full_name: string;
+    };
+  };
+  
+  const typedRecipe = recipe as RecipeWithProfile;
+
   // Get current user for edit/delete buttons
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const isOwner = user?.id === recipe.user_id;
+  const isOwner = user?.id === typedRecipe.user_id;
 
   // Fetch likes count
   const { count: likeCount } = await supabase
@@ -75,14 +95,28 @@ export default async function RecipePage({ params }: RecipePageProps) {
     .eq("recipe_id", id)
     .order("created_at", { ascending: true });
 
-  const commentsWithProfiles = (comments || []).map((comment) => ({
+  type CommentWithProfileData = {
+    id: string;
+    user_id: string;
+    recipe_id: string;
+    content: string;
+    created_at: string;
+    updated_at: string;
+    profiles: {
+      id: string;
+      username: string;
+      full_name: string;
+    };
+  };
+  
+  const commentsWithProfiles = ((comments || []) as CommentWithProfileData[]).map((comment) => ({
     ...comment,
     profiles: comment.profiles,
   }));
-  const ingredients = recipe.ingredients.split("\n").filter((line) => line.trim());
-  const instructions = recipe.instructions
+  const ingredients = typedRecipe.ingredients.split("\n").filter((line: string) => line.trim());
+  const instructions = typedRecipe.instructions
     .split("\n")
-    .filter((line) => line.trim());
+    .filter((line: string) => line.trim());
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
@@ -98,32 +132,32 @@ export default async function RecipePage({ params }: RecipePageProps) {
               ← Back to Dashboard
             </Link>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-50 md:text-4xl">
-              {recipe.title}
+              {typedRecipe.title}
             </h1>
             <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
               <Link
-                href={`/profile/${recipe.profiles.username}`}
+                href={`/profile/${typedRecipe.profiles.username}`}
                 className="hover:text-orange-600 dark:hover:text-orange-400"
               >
                 by{" "}
                 <span className="font-medium text-gray-900 dark:text-gray-50">
-                  {recipe.profiles.full_name || recipe.profiles.username}
+                  {typedRecipe.profiles.full_name || typedRecipe.profiles.username}
                 </span>
               </Link>
-              {recipe.category && (
+              {typedRecipe.category && (
                 <span className="rounded-full bg-gray-100 px-3 py-1 dark:bg-gray-800">
-                  {recipe.category}
+                  {typedRecipe.category}
                 </span>
               )}
-              {recipe.difficulty && (
+              {typedRecipe.difficulty && (
                 <span className="rounded-full bg-gray-100 px-3 py-1 dark:bg-gray-800">
-                  {recipe.difficulty}
+                  {typedRecipe.difficulty}
                 </span>
               )}
-              {recipe.cooking_time && (
+              {typedRecipe.cooking_time && (
                 <span className="flex items-center gap-1">
                   <span>⏱️</span>
-                  {recipe.cooking_time} minutes
+                  {typedRecipe.cooking_time} minutes
                 </span>
               )}
               <LikeButton
@@ -142,7 +176,7 @@ export default async function RecipePage({ params }: RecipePageProps) {
               >
                 Edit
               </Link>
-              <DeleteButton recipeId={id} recipeTitle={recipe.title} />
+              <DeleteButton recipeId={id} recipeTitle={typedRecipe.title} />
             </div>
           )}
         </div>
@@ -155,7 +189,7 @@ export default async function RecipePage({ params }: RecipePageProps) {
               Ingredients
             </h2>
             <ul className="space-y-2">
-              {ingredients.map((ingredient, index) => (
+              {ingredients.map((ingredient: string, index: number) => (
                 <li
                   key={index}
                   className="flex items-start gap-2 text-gray-700 dark:text-gray-300"
@@ -173,7 +207,7 @@ export default async function RecipePage({ params }: RecipePageProps) {
               Instructions
             </h2>
             <ol className="space-y-4">
-              {instructions.map((instruction, index) => (
+              {instructions.map((instruction: string, index: number) => (
                 <li
                   key={index}
                   className="flex gap-4 text-gray-700 dark:text-gray-300"
@@ -193,7 +227,7 @@ export default async function RecipePage({ params }: RecipePageProps) {
           recipeId={id}
           initialComments={commentsWithProfiles}
           currentUserId={user?.id || null}
-          recipeOwnerId={recipe.user_id}
+          recipeOwnerId={typedRecipe.user_id}
         />
       </main>
     </div>

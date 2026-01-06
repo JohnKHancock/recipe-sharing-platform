@@ -95,8 +95,8 @@ export async function ensureProfileExists(userId: string) {
   }
 
   // Insert the profile
-  const { data: newProfile, error: insertError } = await supabase
-    .from("profiles")
+  const { data: newProfile, error: insertError } = await (supabase
+    .from("profiles") as any)
     .insert({
       id: userId,
       username: uniqueUsername,

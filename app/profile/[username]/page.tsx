@@ -40,7 +40,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   const { data: recipes, error: recipesError } = await supabase
     .from("recipes")
     .select("*")
-    .eq("user_id", profile.id)
+    .eq("user_id", typedProfile.id)
     .order("created_at", { ascending: false });
 
   if (recipesError) {
